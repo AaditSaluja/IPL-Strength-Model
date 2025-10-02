@@ -1,5 +1,3 @@
-# 
-
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -14,24 +12,20 @@ urls = [
 
 options = uc.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
-# options.add_argument("--headless=new")  # optional
 
-# 1) Ensure UC downloads a v140-compatible Chrome/driver
-driver = uc.Chrome(options=options, version_main=140)  # <-- key line
+driver = uc.Chrome(options=options, version_main=140)
 
 try:
     for url in urls:
         driver.get(url)
 
-        # (Often there’s a cookie banner that blocks clicks/tables)
         try:
             WebDriverWait(driver, 5).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "button[aria-label='Accept Cookies'], button#onetrust-accept-btn-handler"))
             ).click()
         except Exception:
-            pass  # banner not present
+            pass
 
-        # 2) Wait for the stats table Cricinfo renders (their tables use .ds-table classes)
         tbl = WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "table.ds-table"))
         )
